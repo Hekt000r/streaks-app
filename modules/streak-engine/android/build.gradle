@@ -1,0 +1,43 @@
+plugins {
+  id 'com.android.library'
+  id 'expo-module-gradle-plugin'
+}
+
+group = 'expo.modules.streakengine'
+version = '1.0.0'
+
+apply plugin: 'kotlin-kapt'
+
+android {
+  namespace 'expo.modules.streakengine'
+  compileSdkVersion rootProject.ext.has('compileSdkVersion') ? rootProject.ext.compileSdkVersion : 36
+  defaultConfig {
+    versionCode 1
+    versionName '1.0.0'
+    minSdkVersion 26
+    targetSdkVersion rootProject.ext.has('targetSdkVersion') ? rootProject.ext.targetSdkVersion : 36
+    testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+  }
+  compileOptions {
+    sourceCompatibility JavaVersion.VERSION_17
+    targetCompatibility JavaVersion.VERSION_17
+  }
+  kotlinOptions { jvmTarget = '17' }
+  testOptions { unitTests.returnDefaultValues = true }
+}
+
+kapt {
+  arguments { arg('room.schemaLocation', "$projectDir/schemas") }
+}
+
+dependencies {
+  implementation 'androidx.room:room-runtime:2.7.2'
+  kapt 'androidx.room:room-compiler:2.7.2'
+  implementation 'androidx.core:core-ktx:1.16.0'
+  testImplementation 'junit:junit:4.13.2'
+  testImplementation 'org.json:json:20240303'
+  androidTestImplementation 'androidx.test:runner:1.6.2'
+  androidTestImplementation 'androidx.test:core:1.6.1'
+  androidTestImplementation 'androidx.test.ext:junit:1.2.1'
+  androidTestImplementation 'androidx.room:room-testing:2.7.2'
+}

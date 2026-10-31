@@ -1,0 +1,28 @@
+appId: app.streaks.personal
+---
+- launchApp:
+    clearState: true
+- tapOn: 'Make your first promise'
+- tapOn: 'Use Drink water template'
+- scrollUntilVisible:
+    element:
+      text: 'Let’s make it happen'
+    direction: DOWN
+- tapOn: 'Let’s make it happen'
+- tapOn:
+    id: 'com.android.permissioncontroller:id/permission_allow_button'
+    optional: true
+- tapOn: 'Add 1 glasses to Drink water'
+- assertVisible: '1 / 8 glasses'
+- assertNotVisible: 'You owned today.'
+- tapOn: 'View Drink water'
+- scrollUntilVisible:
+    element:
+      text: 'Or enter today’s total'
+    direction: DOWN
+- tapOn: 'Or enter today’s total'
+- eraseText
+- inputText: '8'
+- hideKeyboard
+- tapOn: 'Save today’s total'
+- assertVisible: 'You owned today.'

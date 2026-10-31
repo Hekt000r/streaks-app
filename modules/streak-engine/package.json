@@ -1,0 +1,8 @@
+{
+  "name": "streak-engine",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Android habit persistence and local reminder engine",
+  "main": "index.js",
+  "peerDependencies": { "expo": "*", "react-native": "*" }
+}

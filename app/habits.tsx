@@ -1,0 +1,22 @@
+import React, { useState } from 'react';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { router } from 'expo-router';
+import { useHabits } from '../src/core/store';
+import { Action, ErrorBanner, Glyph, Header, Icon, IconButton, Loading, Panel, Screen, SectionTitle, s } from '../src/ui/components';
+import { C, weekdayNames } from '../src/ui/theme';
+
+export default function HabitsScreen() {
+  const { snapshot } = useHabits();
+  const [archived, setArchived] = useState(false);
+  if (!snapshot) return <Loading />;
+  const habits = snapshot.habits.filter(h => h.archived === archived);
+  const totals = snapshot.habits.reduce((n, h) => n + h.completedTotal, 0);
+  const best = Math.max(0, ...snapshot.habits.map(h => h.bestStreak));
+  return <Screen tabs><Header title="Built by you." subtitle="YOUR COLLECTION" right={<IconButton name="add" color={C.lime} label="Create a habit" onPress={() => router.push('/habit/edit')} />} /><ErrorBanner />
+    <View style={styles.stats}><View style={styles.stat}><Icon name="checkmark-circle-outline" color={C.lime} size={24} /><Text style={styles.number}>{totals}</Text><Text style={s.hint}>promises kept</Text></View><View style={[styles.stat, { borderColor: '#FF9D6630' }]}><Icon name="flame-outline" color={C.orange} size={24} /><Text style={styles.number}>{best}</Text><Text style={s.hint}>best streak</Text></View></View>
+    <View style={styles.tabs}>{[false, true].map(value => <Pressable key={String(value)} accessibilityRole="tab" accessibilityState={{ selected: archived === value }} onPress={() => setArchived(value)} style={[styles.tab, archived === value && styles.activeTab]}><Text style={[styles.tabText, archived === value && { color: C.text }]}>{value ? 'Archived' : 'Active'} · {snapshot.habits.filter(h => h.archived === value).length}</Text></Pressable>)}</View>
+    <SectionTitle title={archived ? 'Room for a comeback' : 'Your everyday investments'} />
+    {!habits.length ? <Panel><Icon name={archived ? 'archive-outline' : 'leaf-outline'} color={C.lime} size={34} /><Text style={s.sectionTitle}>{archived ? 'Nothing on the shelf.' : 'Start with one small thing.'}</Text><Text style={s.body}>{archived ? 'Archived habits keep their history here. You can restart them whenever you’re ready.' : 'Create your first habit and give tomorrow a head start.'}</Text>{!archived && <Action title="Create a habit" onPress={() => router.push('/habit/edit')} icon="add" />}</Panel> : <View style={{ gap: 12 }}>{habits.map(h => <Pressable key={h.id} accessibilityRole="button" accessibilityLabel={`${h.name}, ${h.currentStreak} day streak, view details`} onPress={() => router.push({ pathname: '/habit/[id]', params: { id: h.id } })} style={styles.habit}><View style={styles.habitTop}><Glyph color={h.color} icon={h.icon} /><View style={{ flex: 1, gap: 5 }}><Text style={styles.habitName}>{h.name}</Text><Text style={s.hint}>{h.days.length === 7 ? 'Every day' : h.days.map(d => weekdayNames[d - 1]?.slice(0, 3)).join(' · ')}</Text></View><Icon name="chevron-forward" color={C.dim} size={17} /></View><View style={styles.habitFoot}><View style={styles.inline}><Icon name="flame" color={C.orange} size={16} /><Text style={styles.footText}>{h.currentStreak} day streak</Text></View><View style={styles.inline}><Icon name="snow-outline" color={C.blue} size={15} /><Text style={styles.footText}>{h.freezes} / 2 freezes</Text></View></View></Pressable>)}</View>}
+  </Screen>;
+}
+const styles = StyleSheet.create({ stats: { flexDirection: 'row', gap: 12 }, stat: { flex: 1, backgroundColor: C.panel, borderRadius: 22, padding: 20, borderWidth: 1, borderColor: '#D4FF6430', gap: 9 }, number: { color: C.text, fontSize: 33, fontWeight: '800', letterSpacing: -1 }, tabs: { flexDirection: 'row', backgroundColor: C.panel, borderRadius: 16, padding: 5 }, tab: { flex: 1, alignItems: 'center', minHeight: 44, justifyContent: 'center', borderRadius: 12 }, activeTab: { backgroundColor: C.raised }, tabText: { color: C.dim, fontSize: 13, fontWeight: '700' }, habit: { backgroundColor: C.panel, borderRadius: 21, borderWidth: 1, borderColor: C.border, padding: 18, gap: 18 }, habitTop: { flexDirection: 'row', alignItems: 'center', gap: 12 }, habitName: { color: C.text, fontSize: 16, fontWeight: '700' }, habitFoot: { flexDirection: 'row', justifyContent: 'space-between', borderTopWidth: 1, borderTopColor: C.border, paddingTop: 14, gap: 7 }, inline: { flexDirection: 'row', gap: 6, alignItems: 'center' }, footText: { color: C.muted, fontSize: 11, fontWeight: '600' } });

@@ -1,0 +1,24 @@
+appId: app.streaks.personal
+---
+- launchApp:
+    clearState: true
+- tapOn: 'Make your first promise'
+- tapOn: 'What.*promise.*'
+- inputText: 'Read before bed'
+- hideKeyboard
+- scrollUntilVisible:
+    element:
+      text: 'Let’s make it happen'
+    direction: DOWN
+- tapOn: 'Let’s make it happen'
+- tapOn:
+    id: 'com.android.permissioncontroller:id/permission_allow_button'
+    optional: true
+- assertVisible: 'Show up for you.'
+- tapOn: 'Complete Read before bed'
+- assertVisible: 'You owned today.'
+- tapOn: 'Enjoy your well-earned peace'
+- assertVisible: 'Promise kept'
+- stopApp
+- launchApp
+- assertVisible: 'Promise kept'
